@@ -1,0 +1,1 @@
+# cognitechna-zadanie.client
