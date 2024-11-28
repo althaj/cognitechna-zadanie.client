@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+import config from "../../config/config.js"
+
 export const taskListSlice = createSlice({
   name: 'taskList',
   initialState: {
@@ -49,12 +51,12 @@ export const taskListSlice = createSlice({
 })
 
 export const getTasks = () => async dispatch => {
-  const response = await fetch('https://localhost:7045/api/tasks')
+  const response = await fetch(config.SERVER_URL + '/api/tasks')
   dispatch(onGetTasks(await response.json()))
 }
 
 export const insertTask = task => async () => {
-  await fetch('https://localhost:7045/api/tasks', {
+  await fetch(config.SERVER_URL + '/api/tasks', {
     method: "POST",
     body: JSON.stringify(task),
     headers: {
@@ -64,7 +66,7 @@ export const insertTask = task => async () => {
 }
 
 export const updateTask = (id, task) => async () => {
-  await fetch('https://localhost:7045/api/tasks/' + id, {
+  await fetch(config.SERVER_URL + '/api/tasks/' + id, {
     method: "PUT",
     body: JSON.stringify(task),
     headers: {
@@ -74,14 +76,14 @@ export const updateTask = (id, task) => async () => {
 }
 
 export const removeTask = id => async () => {
-  await fetch('https://localhost:7045/api/tasks/' + id, {
+  await fetch(config.SERVER_URL + '/api/tasks/' + id, {
     method: "DELETE"
   })
 }
 
 export const processHeavyTask = (id) => async dispatch => {
   dispatch(onSetAwaiting(true))
-  await fetch('https://localhost:7045/api/tasks/process-heavy/' + id)
+  await fetch(config.SERVER_URL + '/api/tasks/process-heavy/' + id)
   dispatch(onSetAwaiting(false))
 }
 

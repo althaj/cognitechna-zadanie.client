@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
 
+import config from "../../config/config.js"
+
 export function TaskList() {
     const tasks = useSelector((state) => state.taskList.tasks)
     const editingTask = useSelector((state) => state.taskList.editingTask)
@@ -20,7 +22,7 @@ export function TaskList() {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        const connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:7045/taskHub").build();
+        const connection = new signalR.HubConnectionBuilder().withUrl(config.SERVER_URL + "/api/taskHub").build()
 
         connection.on("TaskCreated", function (task) {
             dispatch(taskActions.onInsertTask(task))
