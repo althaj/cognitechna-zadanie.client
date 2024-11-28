@@ -4,27 +4,28 @@ export const taskListSlice = createSlice({
   name: 'taskList',
   initialState: {
     tasks: [],
-    editingTask: null
+    editingTask: null,
+    isAwaiting: false
   },
   reducers: {
     onGetTasks: (state, action) => {
       state.tasks = action.payload
     },
     onInsertTask: (state, action) => {
-      let index = state.tasks.findIndex(x => x.Id == action.payload.Id);
+      let index = state.tasks.findIndex(x => x.Id == action.payload.Id)
       if (index < 0) {
         state.tasks.push(action.payload)
       }
     },
     onUpdateTask: (state, action) => {
-      let index = state.tasks.findIndex(x => x.Id == action.payload.Id);
-      state.tasks[index].Title = action.payload.Title;
-      state.tasks[index].Description = action.payload.Description;
+      let index = state.tasks.findIndex(x => x.Id == action.payload.Id)
+      state.tasks[index].Title = action.payload.Title
+      state.tasks[index].Description = action.payload.Description
     },
     onRemoveTask: (state, action) => {
-      let index = state.tasks.findIndex(x => x.Id == action.payload);
+      let index = state.tasks.findIndex(x => x.Id == action.payload)
       if (index > -1) {
-        state.tasks.splice(index, 1);
+        state.tasks.splice(index, 1)
       }
 
       if(state.editingTask.Id === action.payload) {
@@ -35,11 +36,14 @@ export const taskListSlice = createSlice({
       if(state.editingTask != null && state.editingTask.Id === action.payload) {
         state.editingTask = null
       } else {
-        let index = state.tasks.findIndex(x => x.Id == action.payload);
+        let index = state.tasks.findIndex(x => x.Id == action.payload)
         if (index > -1) {
-          state.editingTask = state.tasks[index];
+          state.editingTask = state.tasks[index]
         }
       }
+    },
+    onSetAwaiting: (state, action) => {
+      state.isAwaiting = action.payload
     }
   }
 })
@@ -75,7 +79,13 @@ export const removeTask = id => async () => {
   })
 }
 
+export const processHeavyTask = (id) => async dispatch => {
+  dispatch(onSetAwaiting(true))
+  await fetch('https://localhost:7045/api/tasks/process-heavy/' + id)
+  dispatch(onSetAwaiting(false))
+}
+
 // Action creators are generated for each case reducer function
-export const { onGetTasks, onInsertTask, onUpdateTask, onRemoveTask, onSetEditingTask } = taskListSlice.actions
+export const { onGetTasks, onInsertTask, onUpdateTask, onRemoveTask, onSetEditingTask, onSetAwaiting } = taskListSlice.actions
 
 export default taskListSlice.reducer
